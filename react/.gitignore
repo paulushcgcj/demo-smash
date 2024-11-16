@@ -448,4 +448,3 @@ yarn-error.log
 
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,webstorm+all,intellij+all,maven,java,node,react,vue,vuejs,angular,svelte,macos
-/config/application-local.yml
