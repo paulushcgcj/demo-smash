@@ -3,8 +3,10 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 -- Enable UUID generation
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+CREATE SCHEMA IF NOT EXISTS smash;
+
 -- Customers table
-CREATE TABLE IF NOT EXISTS customers (
+CREATE TABLE IF NOT EXISTS smash.customers (
     customer_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
@@ -24,7 +26,7 @@ CREATE TABLE IF NOT EXISTS customers (
 );
 
 -- Orders table
-CREATE TABLE IF NOT EXISTS orders (
+CREATE TABLE IF NOT EXISTS smash.orders (
     order_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     customer_id UUID NOT NULL,
     order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -39,7 +41,7 @@ CREATE TABLE IF NOT EXISTS orders (
 );
 
 -- Products table
-CREATE TABLE IF NOT EXISTS products (
+CREATE TABLE IF NOT EXISTS smash.products (
     product_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT,
@@ -53,7 +55,7 @@ CREATE TABLE IF NOT EXISTS products (
 );
 
 -- Order Details table
-CREATE TABLE IF NOT EXISTS order_details (
+CREATE TABLE IF NOT EXISTS smash.order_details (
     order_detail_id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     order_id UUID NOT NULL,
     product_id UUID NOT NULL,

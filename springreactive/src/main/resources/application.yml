@@ -23,6 +23,8 @@ spring:
     enabled: true
     validate-on-migrate: true
     baseline-on-migrate: true
+    schemas: smash
+    default-schema: smash
     user: ${io.github.paulushcgcj.postgres.username}
     password: ${io.github.paulushcgcj.postgres.password}
     url: jdbc:postgresql://${io.github.paulushcgcj.postgres.host}/${io.github.paulushcgcj.postgres.database}
@@ -34,7 +36,8 @@ spring:
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
-
+server:
+  max-http-request-header-size: 2MB
 io:
   github:
     paulushcgcj:
