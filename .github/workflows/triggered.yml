@@ -11,15 +11,22 @@ concurrency:
 
 jobs:
   test-fe:
-    name: Test (${{ github.event.workflow_run.pull_requests[0].number }})
+    name: Test Frontend (${{ github.event.workflow_run.pull_requests[0].number }})
     secrets: inherit
     uses: ./.github/workflows/.nodejs-test.yml
     with:
       environment: ${{ github.event.workflow_run.pull_requests[0].number }}
 
+  test-be:
+    name: Test Backend (${{ github.event.workflow_run.pull_requests[0].number }})
+    secrets: inherit
+    uses: ./.github/workflows/.java-test.yml
+    with:
+      environment: ${{ github.event.workflow_run.pull_requests[0].number }}
+
   results:
-    name: PR Results
-    needs: [test-fe]
+    name: Test Results
+    needs: [test-fe, test-be]
     if: always()
     runs-on: ubuntu-24.04
     steps:

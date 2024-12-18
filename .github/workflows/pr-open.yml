@@ -10,15 +10,22 @@ concurrency:
 
 jobs:
   builds-fe:
-    name: Build (${{ github.event.number }})
+    name: Build frontend (${{ github.event.number }})
     secrets: inherit
     uses: ./.github/workflows/.nodejs-build.yml
     with:
       environment: ${{ github.event.number }}
 
+  builds-be:
+    name: Build backend (${{ github.event.number }})
+    secrets: inherit
+    uses: ./.github/workflows/.java-build.yml
+    with:
+      environment: ${{ github.event.number }}
+
   results:
     name: PR Results
-    needs: [builds-fe]
+    needs: [builds-fe, builds-be]
     if: always()
     runs-on: ubuntu-24.04
     steps:

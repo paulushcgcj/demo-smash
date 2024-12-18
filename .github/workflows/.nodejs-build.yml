@@ -15,6 +15,7 @@ jobs:
     name: Build ${{ matrix.app.name }}
 
     strategy:
+      fail-fast: false
       matrix:
         app: 
           - { name: "React carbon", path: "react" }
@@ -33,7 +34,7 @@ jobs:
         node-version: 22.x
         
     - name: Cache dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ${{ matrix.app.path }}/node_modules
         key: ${{ runner.os }}-node-${{ matrix.app.path }}
