@@ -1,0 +1,70 @@
+name: Node.js CI
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        description: GitHub environment; usually PR number, test or prod
+        default: ''
+        required: false
+        type: string
+
+jobs:
+  builds:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+        app: 
+          - { name: "React carbon", path: "react" }
+          - { name: "Vue 3 carbon", path: "vue" }
+    defaults:
+      run:
+        working-directory: ${{ matrix.app.path }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ matrix.app.name }}
+        restore-keys: |
+          ${{ runner.os }}-node-${{ matrix.node-version }}-
+    
+    - name: Install dependencies
+      run: npm ci --ignore-scripts
+    
+    - name: Install OS Specific build deps
+      run: npm install @esbuild/linux-x64 --no-save
+      
+    - name: Build
+      run: npm run build --if-present
+
+    - name: Run tests
+      run: npm test --if-present
+
+  results:
+    name: Job Results
+    if: always()
+    needs: [builds]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Job results for (${{ inputs.environment}})
+        run: |
+          # View results
+          echo "needs.*.result: ${{ toJson(needs.*.result) }}"
+
+      - if: contains(needs.*.result, 'failure')||contains(needs.*.result, 'canceled')
+        run: |
+          # Job failure found
+          echo "At least one job has failed"
+          exit 1
