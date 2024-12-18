@@ -9,21 +9,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  vars:
-    name: Variables
-    runs-on: ubuntu-24.04
-    outputs:
-      url: ${{ steps.calculate.outputs.url }}
-    steps:
-      # steps.calculate.outputs.url => needs.vars.outputs.url
-      - name: Calculate the deployment number
-        id: calculate
-        run: |
-          echo "url=${{ github.event.repository.name }}-$((${{ github.event.number }} % 50))-mywebsite.ca" >> $GITHUB_OUTPUT
+  builds-fe:
+    name: Build (${{ github.event.number }})
+    secrets: inherit
+    uses: ./.github/workflows/.nodejs-build.yml
+    with:
+      environment: ${{ github.event.number }}
 
   results:
     name: PR Results
-    needs: [vars]
+    needs: [builds-fe]
     if: always()
     runs-on: ubuntu-24.04
     steps:

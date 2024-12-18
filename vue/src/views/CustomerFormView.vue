@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // vue
-import { ref, onMounted, reactive } from "vue";
+import { ref, onMounted } from "vue";
 // Carbon
-import { Edit20 as EditIcon, Save20 as SaveIcon } from "@carbon/icons-vue";
+import { Edit20, Save20 } from "@carbon/icons-vue";
 // Other components
 import * as jsonpatch from "fast-json-patch";
 // Smash components
@@ -86,7 +86,7 @@ onMounted(() => {
     <CustomerEdit v-model="data" v-else />
     <cv-button-set>
       <cv-button
-        :icon="EditIcon"
+        :icon="Edit20"
         @click="toggleEditMode"
         :aria-label="isEditMode ? 'cancel button' : 'edit button'"
         size="field"
@@ -95,7 +95,7 @@ onMounted(() => {
       </cv-button>
       <cv-button
         v-if="isEditMode"
-        :icon="SaveIcon"
+        :icon="Save20"
         kind="primary"
         @click="saveData"
         aria-label="save button"
