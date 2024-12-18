@@ -1,4 +1,4 @@
-name: Node.js Tests
+name: Java Tests
 
 on:
   workflow_call:
@@ -12,14 +12,14 @@ on:
 jobs:
   builds:
     runs-on: ubuntu-latest
-    name: Build ${{ matrix.app.name }}
+    name: Test ${{ matrix.app.name }}
 
     strategy:
       fail-fast: false
       matrix:
         app: 
-          - { name: "React carbon", path: "react" }
-          - { name: "Vue 3 carbon", path: "vue" }
+          - { name: "Spring boot reactive", path: "springreactive" }
+          - { name: "Quarkus reactive", path: "quarkus" }
     defaults:
       run:
         working-directory: ${{ matrix.app.path }}
@@ -28,27 +28,23 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Use Node.js 22.x
-      uses: actions/setup-node@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
       with:
-        node-version: 22.x
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
         
     - name: Cache dependencies
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
-        path: ${{ matrix.app.path }}/node_modules
-        key: ${{ runner.os }}-node-${{ matrix.app.path }}
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}-${{ matrix.app.path }}
         restore-keys: |
-          ${{ runner.os }}-node-${{ matrix.app.path }}-
+          ${{ runner.os }}-maven-${{ matrix.app.path }}-
     
-    - name: Install dependencies
-      run: npm ci --ignore-scripts
-    
-    - name: Install OS Specific build deps
-      run: npm install @esbuild/linux-x64 --no-save
-      
-    - name: Build
-      run: npm test --if-present
+    - name: Build with Maven
+      run: mvn -B verify -P all-tests --file pom.xml
 
   results:
     name: Job Results
