@@ -12,6 +12,7 @@ on:
 jobs:
   builds:
     runs-on: ubuntu-latest
+    name: Build ${{ matrix.app.name }} on Node.js ${{ matrix.node-version }}
 
     strategy:
       matrix:
