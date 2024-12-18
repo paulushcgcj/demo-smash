@@ -35,7 +35,7 @@ jobs:
     - name: Cache dependencies
       uses: actions/cache@v3
       with:
-        path: node_modules
+        path: ${{ matrix.app.path }}/node_modules
         key: ${{ runner.os }}-node-${{ matrix.node-version }}-${{ matrix.app.name }}
         restore-keys: |
           ${{ runner.os }}-node-${{ matrix.node-version }}-
