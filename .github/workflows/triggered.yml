@@ -1,0 +1,18 @@
+name: Run Tests
+
+on:
+  workflow_run:
+    workflows: ["Pull Request Open"]
+    types: [completed]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug Pull Requests Field
+        run: |
+          echo "Payload: ${{ toJSON(github.event.workflow_run) }}"
+          echo "PR Number (Array): ${{ github.event.workflow_run.pull_requests[0].number }}"
+          echo "PR Number (Object): ${{ github.event.workflow_run.pull_requests.number }}"
+      - name: Run Tests
+        run: echo "Running for PR"
