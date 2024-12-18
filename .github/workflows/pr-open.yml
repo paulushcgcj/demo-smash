@@ -12,7 +12,7 @@ jobs:
   builds-fe:
     name: Build (${{ github.event.number }})
     secrets: inherit
-    uses: ./.github/workflows/.nodejs.yml
+    uses: ./.github/workflows/.nodejs-build.yml
     with:
       environment: ${{ github.event.number }}
 

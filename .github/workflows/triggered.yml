@@ -5,13 +5,24 @@ on:
     workflows: ["Pull Request Open"]
     types: [completed]
 
+concurrency:
+  group: uat-${{ github.event.workflow_run.pull_requests[0].number }}
+  cancel-in-progress: true
+
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  test-fe:
+    name: Test (${{ github.event.workflow_run.pull_requests[0].number }})
+    secrets: inherit
+    uses: ./.github/workflows/.nodejs-test.yml
+    with:
+      environment: ${{ github.event.workflow_run.pull_requests[0].number }}
+
+  results:
+    name: PR Results
+    needs: [test-fe]
+    if: always()
+    runs-on: ubuntu-24.04
     steps:
-      - name: Debug Pull Requests Field
-        run: |
-          echo "Payload: ${{ toJSON(github.event.workflow_run) }}"
-          echo "PR Number (Object): ${{ github.event.workflow_run.pull_requests.number }}"
-      - name: Run Tests
-        run: echo "Running for PR"
+      - if: contains(needs.*.result, 'failure')||contains(needs.*.result, 'canceled')
+        run: echo "At least one job has failed." && exit 1
+      - run: echo "Success!"
